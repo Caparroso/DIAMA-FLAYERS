@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DIAMA - Flyer 3D</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <style>
+        /* RESET GENERAL */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent; /* Quita el cuadro azul feo al tocar en celulares */
+        }
+
+        body, html {
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            background-color: #0c0d14;
+        }
+
+        /* FONDO INTERFAZ ADAPTADO */
+        #bg-image-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('DIAMA%20/%20BANER%20/%20IMAGENES/DIAMA%20FONDO.jpeg'); 
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: 1;
+        }
+
+        /* CAPA DEL CANVAS 3D */
+        #canvas-3d {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        /* CAPA DE INTERFAZ RESPONSIVA */
+        .ui-container {
+            position: relative;
+            z-index: 3;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 30px 24px; /* Padding más compacto en móviles */
+        }
+
+        /* ANIMACIONES OPTIMIZADAS */
+        @keyframes floatAnimation {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); } /* Menor recorrido para mejor rendimiento */
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 5px rgba(255, 255, 255, 0.2); }
+            50% { box-shadow: 0 0 15px rgba(255, 255, 255, 0.5); }
+            100% { box-shadow: 0 0 5px rgba(255, 255, 255, 0.2); }
+        }
+
+        .floating-element {
+            animation: floatAnimation 4s ease-in-out infinite;
+        }
+        .delay-1 { animation-delay: 0.4s; }
+        .delay-2 { animation-delay: 0.8s; }
+
+        /* BLOQUE SUPERIOR */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            width: 100%;
+        }
+
+        .brand-left {
+            color: #fff;
+            line-height: 0.9;
+        }
+
+        .brand-left h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 700;
+            letter-spacing: -2px;
+        }
+
+        .brand-left p {
+            font-size: clamp(1.2rem, 3vw, 2.2rem);
+            font-weight: 500;
+            letter-spacing: -1px;
+            margin-top: -2px;
+        }
+
+        .lineup-right {
+            text-align: right;
+            color: #fff;
+        }
+
+        .lineup-title {
+            font-size: clamp(1.5rem, 3.5vw, 3rem);
+            font-weight: 400;
+            font-family: 'Times New Roman', Times, serif;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .artists {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+        }
+
+        .artists span {
+            font-size: clamp(1.4rem, 3vw, 2.8rem);
+            font-weight: 300;
+            text-transform: lowercase;
+            letter-spacing: 1px;
+            line-height: 0.9;
+        }
+
+        /* BLOQUE INFERIOR */
+        .footer {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 100%;
+            gap: 12px;
+        }
+
+        .date-row {
+            display: flex;
+            flex-direction: column; /* Apilado en móvil por defecto */
+            align-items: flex-start;
+            gap: 2px;
+        }
+
+        .main-date {
+            color: #d12a2a; 
+            font-size: clamp(2.5rem, 6.5vw, 5.5rem);
+            font-weight: 900;
+            font-style: italic;
+            letter-spacing: -1px;
+            line-height: 0.9;
+        }
+
+        .sub-date {
+            color: #d12a2a;
+            font-size: clamp(1.1rem, 3vw, 2.5rem);
+            font-weight: 700;
+            font-style: italic;
+            letter-spacing: -0.5px;
+        }
+
+        .japanese-sub {
+            color: #111;
+            font-size: clamp(0.7rem, 1.5vw, 1.2rem);
+            font-weight: bold;
+            border: 1px solid #111;
+            padding: 1px 6px;
+            letter-spacing: 0.5px;
+            max-width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis; /* Evita que el texto japonés rompa la pantalla */
+        }
+
+        .footer-bottom-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            width: 100%;
+            gap: 15px;
+        }
+
+        .japanese-main {
+            color: #111;
+            font-size: clamp(2rem, 5.5vw, 4.5rem);
+            font-weight: 900;
+            letter-spacing: -1px;
+            line-height: 1;
+        }
+
+        /* BOTÓN DE PREVENTA MOVIL-FIRST */
+        .btn-preventa {
+            display: inline-block;
+            text-decoration: none;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.8);
+            font-size: clamp(0.9rem, 2vw, 1.3rem);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-style: italic;
+            letter-spacing: 1px;
+            padding: 14px 22px; /* Más alto para facilitar el toque táctil */
+            border: 2px solid #ffffff;
+            border-radius: 0px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s ease;
+            animation: pulseGlow 2.5s infinite;
+        }
+
+        /* ==========================================
+           A JUSTES ESPECÍFICOS PARA MÓVILES (MEDIA QUERIES)
+        ========================================== */
+        @media (max-width: 768px) {
+            .ui-container {
+                padding: 24px 18px;
+            }
+            
+            /* Reorganiza el header para que no se encima con el 3D */
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .lineup-right {
+                text-align: left; /* Alineado a la izquierda en celular se lee mejor en bloques */
+            }
+
+            /* Cambios en la fila de abajo en móvil */
+            .footer-bottom-row {
+                flex-direction: column;
+                align-items: stretch; /* El botón ocupa todo el ancho disponible */
+                gap: 15px;
+            }
+            
+            .btn-preventa {
+                width: 100%; /* Botón gigante abajo tipo app para conversión directa */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="bg-image-layer"></div>
+    <canvas id="canvas-3d"></canvas>
+
+    <main class="ui-container">
+        <header class="header">
+            <div class="brand-left">
+                <h1>Diama.</h1>
+                <p>Querétaro</p>
+            </div>
+
+            <div class="lineup-right floating-element">
+                <h3 class="lineup-title">Break Madre</h3>
+                <div class="artists">
+                    <span>caparroso</span>
+                    <span>firefly light</span>
+                    <span>andrésestr3s</span>
+                </div>
+            </div>
+        </header>
+
+        <footer class="footer">
+            <div class="date-row floating-element delay-1">
+                <div class="main-date">23 de mayo</div>
+                <div class="sub-date">8pm ubicación secreta</div>
+            </div>
+
+            <div class="japanese-sub">
+                カジェ 13 デ セプティエンブレ #1、ニーニョス エロエス
+            </div>
+
+            <div class="footer-bottom-row">
+                <h2 class="japanese-main floating-element delay-2">
+                    スキッと収納。
+                </h2>
+                
+                <a href="https://chat.whatsapp.com/E5mDw0LHP8Y9b9bU42Zchm" target="_blank" class="btn-preventa">
+                    Registrarse / Preventa
+                </a>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        let scene, camera, renderer, tesseractGroup;
+        let clock = new THREE.Clock();
+        
+        // Detectar si es dispositivo móvil para bajar resolución de polígonos/tamaños si fuera necesario
+        const isMobile = window.innerWidth <= 768;
+
+        function init3D() {
+            scene = new THREE.Scene();
+            scene.background = null;
+
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+            
+            // Si es móvil, alejamos un pelín la cámara o achicamos el objeto para el espacio vertical
+            camera.position.z = isMobile ? 4.5 : 4; 
+
+            renderer = new THREE.WebGLRenderer({
+                canvas: document.getElementById('canvas-3d'),
+                alpha: true,
+                antialias: !isMobile // Desactiva antialias en celulares viejos para duplicar rendimiento
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            
+            // Limitamos el pixel ratio a un máximo de 2 para que pantallas de súper alta resolución (Retina/OLED) no exploten la GPU del cel
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            tesseractGroup = new THREE.Group();
+
+            const lineMaterial = new THREE.LineBasicMaterial({ 
+                color: 0xffffff,
+                transparent: true,
+                opacity: 0.9
+            });
+
+            // Escalado inicial responsivo del tesseract
+            const baseSize = isMobile ? 0.9 : 1.2;
+            const innerSize = baseSize * 0.46;
+
+            // Cubo Exterior
+            const geoOuter = new THREE.BoxGeometry(baseSize, baseSize, baseSize);
+            const edgesOuter = new THREE.EdgesGeometry(geoOuter);
+            const cubeOuter = new THREE.LineSegments(edgesOuter, lineMaterial);
+
+            // Cubo Interior
+            const geoInner = new THREE.BoxGeometry(innerSize, innerSize, innerSize);
+            const edgesInner = new THREE.EdgesGeometry(geoInner);
+            const cubeInner = new THREE.LineSegments(edgesInner, lineMaterial);
+
+            tesseractGroup.add(cubeOuter);
+            tesseractGroup.add(cubeInner);
+
+            // Conectores hiperdimensionales
+            const connectorGeometry = new THREE.BufferGeometry();
+            const vertices = [];
+            const h = baseSize / 2;
+            const ih = innerSize / 2;
+            const vOpt = [-h, h];
+
+            for (let x of vOpt) {
+                for (let y of vOpt) {
+                    for (let z of vOpt) {
+                        vertices.push(x, y, z);
+                        let ix = x > 0 ? ih : -ih;
+                        let iy = y > 0 ? ih : -ih;
+                        let iz = z > 0 ? ih : -ih;
+                        vertices.push(ix, iy, iz);
+                    }
+                }
+            }
+
+            connectorGeometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+            const connections = new THREE.LineSegments(connectorGeometry, lineMaterial);
+            tesseractGroup.add(connections);
+
+            // Ajuste de posición central para móviles (centrado en el hueco vertical)
+            if(isMobile) {
+                tesseractGroup.position.set(0, 0.1, 0);
+            }
+
+            scene.add(tesseractGroup);
+
+            window.addEventListener('resize', onWindowResize, false);
+            animate();
+        }
+
+        function onWindowResize() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            const checkMobile = width <= 768;
+            
+            camera.aspect = width / height;
+            camera.position.z = checkMobile ? 4.5 : 4;
+            camera.updateProjectionMatrix();
+            
+            renderer.setSize(width, height);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // El método clock.getElapsedTime() es ideal y muy ligero para animaciones basadas en tiempo
+            let time = clock.getElapsedTime();
+
+            tesseractGroup.rotation.y = time * 0.22;
+            tesseractGroup.rotation.x = time * 0.12;
+
+            // Pulsación de las dimensiones
+            const pulseOuter = 1 + Math.sin(time * 1.3) * 0.12;
+            const pulseInner = 1 - Math.sin(time * 1.3) * 0.18;
+
+            tesseractGroup.children[0].scale.set(pulseOuter, pulseOuter, pulseOuter);
+            tesseractGroup.children[1].scale.set(pulseInner, pulseInner, pulseInner);
+            tesseractGroup.children[2].scale.set(pulseOuter, pulseOuter, pulseOuter);
+
+            // Flotación sutil vertical
+            tesseractGroup.position.y = (isMobile ? 0.1 : 0) + Math.sin(time * 0.8) * 0.06;
+
+            renderer.render(scene, camera);
+        }
+
+        window.onload = init3D;
+    </script>
+</body>
+</html>

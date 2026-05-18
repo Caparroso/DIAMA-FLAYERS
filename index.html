@@ -37,14 +37,10 @@
             z-index: 1;
         }
 
-        /* ==========================================================
-           EL ZOOM ULTRA QUIRÚRGICO (SÓLO COLOR DEGRADADO EN MÓVIL)
-        ========================================================== */
+        /* ZOOM ULTRA QUIRÚRGICO (SÓLO COLOR DEGRADADO EN MÓVIL) */
         @media (max-width: 768px) {
             #bg-image-layer {
-                /* Súper zoom para aislar únicamente la textura lila limpia */
                 background-size: 340% 100vh; 
-                /* Enfoca la esquina inferior derecha, ocultando el rostro y todas las letras estáticas */
                 background-position: 95% 90%; 
             }
         }
@@ -72,7 +68,7 @@
             padding: 30px 24px;
         }
 
-        /* ANIMACIONES DE FLOTACIÓN (TUS TEXTOS FLOTANTES) */
+        /* ANIMACIONES DE FLOTACIÓN */
         @keyframes floatAnimation {
             0% { transform: translateY(0px); }
             50% { transform: translateY(-10px); }
@@ -91,60 +87,62 @@
         .delay-1 { animation-delay: 0.5s; }
         .delay-2 { animation-delay: 1s; }
 
-        /* BLOQUE SUPERIOR (Tus fuentes originales intactas) */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            width: 100%;
-        }
-
+        /* ==========================================================
+           RESTAURACIÓN DE LAS PRIMERAS FUENTES (TUS FUENTES)
+        ========================================================== */
+        
+        /* Bloque Superior Izquierdo: "Diama. Querétaro" */
         .brand-left {
             color: #111111;
             line-height: 0.9;
         }
 
         .brand-left h1 {
-            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-size: clamp(3rem, 6vw, 4.5rem);
             font-weight: 700;
-            letter-spacing: -2px;
+            letter-spacing: -2px; /* Espaciado ajustado original */
         }
 
         .brand-left p {
-            font-size: clamp(1.2rem, 3vw, 2.2rem);
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-size: clamp(1.5rem, 3vw, 2.2rem);
             font-weight: 500;
             letter-spacing: -1px;
-            margin-top: -2px;
+            margin-top: -5px;
         }
 
+        /* Bloque Superior Derecho: Lineup */
         .lineup-right {
             text-align: right;
             color: #111111;
         }
 
         .lineup-title {
-            font-size: clamp(1.5rem, 3.5vw, 3rem);
+            font-family: 'Times New Roman', Times, serif; /* Fuente Serif Clásica Inicial */
+            font-size: clamp(2rem, 4vw, 3rem);
             font-weight: 400;
-            font-family: 'Times New Roman', Times, serif;
+            letter-spacing: 1px;
             line-height: 1;
-            margin-bottom: 4px;
+            margin-bottom: 5px;
         }
 
         .artists {
             display: flex;
             flex-direction: column;
-            gap: 1px;
+            gap: 2px;
         }
 
         .artists span {
-            font-size: clamp(1.4rem, 3vw, 2.8rem);
+            font-family: 'Helvetica Neue', Arial, sans-serif; /* Fuentes limpias iniciales */
+            font-size: clamp(1.8rem, 3.5vw, 2.8rem);
             font-weight: 300;
-            text-transform: lowercase;
-            letter-spacing: 1px;
+            text-transform: lowercase; /* Todo en minúsculas */
+            letter-spacing: 2px;
             line-height: 0.9;
         }
 
-        /* BLOQUE INFERIOR */
+        /* Bloque Inferior Izquierdo: Fecha y Detalles */
         .footer {
             display: flex;
             flex-direction: column;
@@ -155,39 +153,38 @@
 
         .date-row {
             display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 2px;
+            align-items: baseline;
+            gap: 15px;
+            margin-bottom: 10px;
         }
 
         .main-date {
             color: #d12a2a; 
-            font-size: clamp(2.5rem, 6.5vw, 5.5rem);
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-size: clamp(3rem, 7vw, 5.5rem);
             font-weight: 900;
             font-style: italic;
-            letter-spacing: -1px;
-            line-height: 0.9;
+            letter-spacing: -2px;
+            line-height: 0.8;
         }
 
         .sub-date {
             color: #d12a2a;
-            font-size: clamp(1.1rem, 3vw, 2.5rem);
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-size: clamp(1.5rem, 3.5vw, 2.5rem);
             font-weight: 700;
             font-style: italic;
-            letter-spacing: -0.5px;
+            letter-spacing: -1px;
         }
 
         .japanese-sub {
             color: #111111;
-            font-size: clamp(0.7rem, 1.5vw, 1.2rem);
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-size: clamp(0.8rem, 1.8vw, 1.2rem);
             font-weight: bold;
             border: 1px solid #111111;
-            padding: 1px 6px;
-            letter-spacing: 0.5px;
-            max-width: 100%;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            padding: 2px 8px;
+            letter-spacing: 1px;
         }
 
         .footer-bottom-row {
@@ -200,7 +197,8 @@
 
         .japanese-main {
             color: #111111;
-            font-size: clamp(2rem, 5.5vw, 4.5rem);
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
             font-weight: 900;
             letter-spacing: -1px;
             line-height: 1;
@@ -212,6 +210,7 @@
             text-decoration: none;
             color: #ffffff;
             background: #111111; 
+            font-family: 'Helvetica Neue', Arial, sans-serif;
             font-size: clamp(0.9rem, 2vw, 1.3rem);
             font-weight: 700;
             text-transform: uppercase;
@@ -233,13 +232,19 @@
             box-shadow: 0 0 25px rgba(0,0,0,0.2);
         }
 
-        /* RESPONSIVO FLUJO MÓVIL */
+        /* FLUJO MÓVIL (Mantiene la estructura compacta) */
         @media (max-width: 768px) {
             .ui-container { padding: 24px 18px; }
             .header { flex-direction: column; gap: 15px; }
             .lineup-right { text-align: left; }
             .footer-bottom-row { flex-direction: column; align-items: stretch; gap: 15px; }
             .btn-preventa { width: 100%; }
+            
+            .date-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 2px;
+            }
         }
     </style>
 </head>

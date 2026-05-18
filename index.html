@@ -13,7 +13,6 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Helvetica Neue', Arial, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -24,7 +23,7 @@
             background-color: #ffffff;
         }
 
-        /* CAPA DEL FONDO */
+        /* CAPA DEL FONDO CON ZOOM RESPONSIVO (OCULTA EL ROSTRO EN MÓVIL) */
         #bg-image-layer {
             position: fixed;
             top: 0;
@@ -33,20 +32,16 @@
             height: 100%;
             background-image: url('DIAMA%20FONDO.jpeg'); 
             background-size: cover;
-            background-position: center; /* Centrado por defecto en Web */
+            background-position: center;
             background-repeat: no-repeat;
             z-index: 1;
         }
 
-        /* ==========================================
-           EL AJUSTE CLAVE PARA EL CELULAR 
-        ========================================== */
+        /* EL ZOOM QUIRÚRGICO EXCLUSIVO PARA CELULARES */
         @media (max-width: 768px) {
             #bg-image-layer {
-                /* Desplaza la imagen a la derecha para ocultar el rostro y mostrar solo el degradado lila */
-                background-position: 78% center; 
-                /* Amplía ligeramente la escala de fondo para un encuadre perfecto en vertical */
-                background-size: 140% 100vh; 
+                background-size: 190% 100vh; /* Amplía la imagen para ocultar el rostro */
+                background-position: 88% center; /* Desplaza el fondo para centrar el lila limpio */
             }
         }
 
@@ -61,7 +56,7 @@
             pointer-events: none;
         }
 
-        /* CAPA DE INTERFAZ RESPONSIVA */
+        /* CAPA DE INTERFAZ GENERAL */
         .ui-container {
             position: relative;
             z-index: 3;
@@ -73,10 +68,12 @@
             padding: 30px 24px;
         }
 
-        /* ANIMACIONES CSS */
+        /* ==========================================
+           ANIMACIONES DE FLOTACIÓN (EFECTO 3D)
+        ========================================== */
         @keyframes floatAnimation {
             0% { transform: translateY(0px); }
-            50% { transform: translateY(-8px); }
+            50% { transform: translateY(-10px); }
             100% { transform: translateY(0px); }
         }
 
@@ -87,12 +84,12 @@
         }
 
         .floating-element {
-            animation: floatAnimation 4s ease-in-out infinite;
+            animation: floatAnimation 4.5s ease-in-out infinite;
         }
-        .delay-1 { animation-delay: 0.4s; }
-        .delay-2 { animation-delay: 0.8s; }
+        .delay-1 { animation-delay: 0.5s; }
+        .delay-2 { animation-delay: 1s; }
 
-        /* BLOQUE SUPERIOR */
+        /* BLOQUE SUPERIOR (Tus fuentes y estilos intactos) */
         .header {
             display: flex;
             justify-content: space-between;
@@ -207,7 +204,7 @@
             line-height: 1;
         }
 
-        /* BOTÓN DE PREVENTA */
+        /* BOTÓN DE PREVENTA EN INTERFAZ */
         .btn-preventa {
             display: inline-block;
             text-decoration: none;
@@ -234,6 +231,7 @@
             box-shadow: 0 0 25px rgba(0,0,0,0.2);
         }
 
+        /* AJUSTES RESPONSIVOS EN MÓVIL SÓLO PARA ACOMODAR EL FLUJO */
         @media (max-width: 768px) {
             .ui-container { padding: 24px 18px; }
             .header { flex-direction: column; gap: 15px; }
@@ -246,16 +244,17 @@
 <body>
 
     <div id="bg-image-layer"></div>
+    
     <canvas id="canvas-3d"></canvas>
 
     <main class="ui-container">
         <header class="header">
-            <div class="brand-left">
+            <div class="brand-left float-layer-1 floating-element">
                 <h1>Diama.</h1>
                 <p>Querétaro</p>
             </div>
 
-            <div class="lineup-right floating-element">
+            <div class="lineup-right floating-element delay-1">
                 <h3 class="lineup-title">Break Madre</h3>
                 <div class="artists">
                     <span>caparroso</span>
@@ -392,11 +391,6 @@
 
             renderer.render(scene, camera);
         }
-
-        window.onload = init3D;
-    </script>
-</body>
-</html>
 
         window.onload = init3D;
     </script>

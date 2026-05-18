@@ -37,11 +37,15 @@
             z-index: 1;
         }
 
-        /* ZOOM ULTRA QUIRÚRGICO (SÓLO COLOR DEGRADADO EN MÓVIL) */
+        /* =========================================================================
+           EL ZOOM ABSOLUTO (AÍSLA AL 100% EL DEGRADADO LILA LIMPIO EN CELULARES)
+        ========================================================================= */
         @media (max-width: 768px) {
             #bg-image-layer {
-                background-size: 340% 100vh; 
-                background-position: 95% 90%; 
+                /* Zoom masivo para que solo entre el color en la pantalla del cel */
+                background-size: 520% 100vh; 
+                /* Clava la esquina inferior derecha limpia, botando todo el texto original */
+                background-position: 100% 95%; 
             }
         }
 
@@ -87,11 +91,7 @@
         .delay-1 { animation-delay: 0.5s; }
         .delay-2 { animation-delay: 1s; }
 
-        /* ==========================================================
-           RESTAURACIÓN DE LAS PRIMERAS FUENTES (TUS FUENTES)
-        ========================================================== */
-        
-        /* Bloque Superior Izquierdo: "Diama. Querétaro" */
+        /* FUENTES ORIGINALES RESTAURADAS */
         .brand-left {
             color: #111111;
             line-height: 0.9;
@@ -101,7 +101,7 @@
             font-family: 'Helvetica Neue', Arial, sans-serif;
             font-size: clamp(3rem, 6vw, 4.5rem);
             font-weight: 700;
-            letter-spacing: -2px; /* Espaciado ajustado original */
+            letter-spacing: -2px;
         }
 
         .brand-left p {
@@ -112,14 +112,13 @@
             margin-top: -5px;
         }
 
-        /* Bloque Superior Derecho: Lineup */
         .lineup-right {
             text-align: right;
             color: #111111;
         }
 
         .lineup-title {
-            font-family: 'Times New Roman', Times, serif; /* Fuente Serif Clásica Inicial */
+            font-family: 'Times New Roman', Times, serif;
             font-size: clamp(2rem, 4vw, 3rem);
             font-weight: 400;
             letter-spacing: 1px;
@@ -134,15 +133,14 @@
         }
 
         .artists span {
-            font-family: 'Helvetica Neue', Arial, sans-serif; /* Fuentes limpias iniciales */
+            font-family: 'Helvetica Neue', Arial, sans-serif;
             font-size: clamp(1.8rem, 3.5vw, 2.8rem);
             font-weight: 300;
-            text-transform: lowercase; /* Todo en minúsculas */
+            text-transform: lowercase;
             letter-spacing: 2px;
             line-height: 0.9;
         }
 
-        /* Bloque Inferior Izquierdo: Fecha y Detalles */
         .footer {
             display: flex;
             flex-direction: column;
@@ -204,7 +202,6 @@
             line-height: 1;
         }
 
-        /* BOTÓN DE PREVENTA */
         .btn-preventa {
             display: inline-block;
             text-decoration: none;
@@ -232,19 +229,13 @@
             box-shadow: 0 0 25px rgba(0,0,0,0.2);
         }
 
-        /* FLUJO MÓVIL (Mantiene la estructura compacta) */
         @media (max-width: 768px) {
             .ui-container { padding: 24px 18px; }
             .header { flex-direction: column; gap: 15px; }
             .lineup-right { text-align: left; }
             .footer-bottom-row { flex-direction: column; align-items: stretch; gap: 15px; }
             .btn-preventa { width: 100%; }
-            
-            .date-row {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 2px;
-            }
+            .date-row { flex-direction: column; align-items: flex-start; gap: 2px; }
         }
     </style>
 </head>
@@ -400,5 +391,7 @@
 
         window.onload = init3D;
     </script>
+</body>
+</html>
 </body>
 </html>

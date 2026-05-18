@@ -23,7 +23,7 @@
             background-color: #ffffff;
         }
 
-        /* CAPA DEL FONDO CON ZOOM RESPONSIVO (OCULTA EL ROSTRO EN MÓVIL) */
+        /* CAPA DEL FONDO CON ULTRA-ZOOM PARA MÓVIL */
         #bg-image-layer {
             position: fixed;
             top: 0;
@@ -37,11 +37,15 @@
             z-index: 1;
         }
 
-        /* EL ZOOM QUIRÚRGICO EXCLUSIVO PARA CELULARES */
+        /* ==========================================================
+           EL ZOOM ULTRA QUIRÚRGICO (SÓLO COLOR DEGRADADO EN MÓVIL)
+        ========================================================== */
         @media (max-width: 768px) {
             #bg-image-layer {
-                background-size: 190% 100vh; /* Amplía la imagen para ocultar el rostro */
-                background-position: 88% center; /* Desplaza el fondo para centrar el lila limpio */
+                /* Súper zoom para aislar únicamente la textura lila limpia */
+                background-size: 340% 100vh; 
+                /* Enfoca la esquina inferior derecha, ocultando el rostro y todas las letras estáticas */
+                background-position: 95% 90%; 
             }
         }
 
@@ -68,9 +72,7 @@
             padding: 30px 24px;
         }
 
-        /* ==========================================
-           ANIMACIONES DE FLOTACIÓN (EFECTO 3D)
-        ========================================== */
+        /* ANIMACIONES DE FLOTACIÓN (TUS TEXTOS FLOTANTES) */
         @keyframes floatAnimation {
             0% { transform: translateY(0px); }
             50% { transform: translateY(-10px); }
@@ -89,7 +91,7 @@
         .delay-1 { animation-delay: 0.5s; }
         .delay-2 { animation-delay: 1s; }
 
-        /* BLOQUE SUPERIOR (Tus fuentes y estilos intactos) */
+        /* BLOQUE SUPERIOR (Tus fuentes originales intactas) */
         .header {
             display: flex;
             justify-content: space-between;
@@ -204,7 +206,7 @@
             line-height: 1;
         }
 
-        /* BOTÓN DE PREVENTA EN INTERFAZ */
+        /* BOTÓN DE PREVENTA */
         .btn-preventa {
             display: inline-block;
             text-decoration: none;
@@ -231,7 +233,7 @@
             box-shadow: 0 0 25px rgba(0,0,0,0.2);
         }
 
-        /* AJUSTES RESPONSIVOS EN MÓVIL SÓLO PARA ACOMODAR EL FLUJO */
+        /* RESPONSIVO FLUJO MÓVIL */
         @media (max-width: 768px) {
             .ui-container { padding: 24px 18px; }
             .header { flex-direction: column; gap: 15px; }
@@ -244,12 +246,11 @@
 <body>
 
     <div id="bg-image-layer"></div>
-    
     <canvas id="canvas-3d"></canvas>
 
     <main class="ui-container">
         <header class="header">
-            <div class="brand-left float-layer-1 floating-element">
+            <div class="brand-left floating-element">
                 <h1>Diama.</h1>
                 <p>Querétaro</p>
             </div>

@@ -1,14 +1,20 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    >
+
     <title>DIAMA - Flyer 3D</title>
-    
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    
+
     <style>
-        /* RESET GENERAL */
+
         * {
             margin: 0;
             padding: 0;
@@ -17,381 +23,1231 @@
         }
 
         body, html {
+
             width: 100%;
             height: 100vh;
+
             overflow: hidden;
+
             background-color: #ffffff;
+
         }
 
-        /* CAPA DEL FONDO CON ULTRA-ZOOM PARA MÓVIL */
         #bg-image-layer {
+
             position: fixed;
+
             top: 0;
             left: 0;
+
             width: 100%;
             height: 100%;
-            background-image: url('DIAMA%20FONDO.jpeg'); 
+
+            background-image: url('DIAMA%20FONDO.jpeg');
+
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
+
             z-index: 1;
+
         }
 
-        /* =========================================================================
-           EL ZOOM ABSOLUTO (AÍSLA AL 100% EL DEGRADADO LILA LIMPIO EN CELULARES)
-        ========================================================================= */
         @media (max-width: 768px) {
+
             #bg-image-layer {
-                /* Zoom masivo para que solo entre el color en la pantalla del cel */
-                background-size: 520% 100vh; 
-                /* Clava la esquina inferior derecha limpia, botando todo el texto original */
-                background-position: 100% 95%; 
+
+                background-size: 520% 100vh;
+                background-position: 100% 95%;
+
             }
+
         }
 
-        /* CAPA DEL CANVAS 3D */
         #canvas-3d {
+
             position: fixed;
+
             top: 0;
             left: 0;
+
             width: 100%;
             height: 100%;
+
             z-index: 2;
+
             pointer-events: none;
+
         }
 
-        /* CAPA DE INTERFAZ GENERAL */
         .ui-container {
+
             position: relative;
+
             z-index: 3;
+
             width: 100%;
             height: 100vh;
+
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+
             padding: 30px 24px;
+
         }
 
-        /* ANIMACIONES DE FLOTACIÓN */
+        .header {
+
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+
+            gap: 20px;
+
+        }
+
         @keyframes floatAnimation {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
+
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+
         }
 
         @keyframes pulseGlow {
-            0% { box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); }
-            50% { box-shadow: 0 0 15px rgba(0, 0, 0, 0.3); }
-            100% { box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); }
+
+            0% {
+                box-shadow: 0 0 5px rgba(0,0,0,0.1);
+            }
+
+            50% {
+                box-shadow: 0 0 15px rgba(0,0,0,0.3);
+            }
+
+            100% {
+                box-shadow: 0 0 5px rgba(0,0,0,0.1);
+            }
+
         }
 
         .floating-element {
             animation: floatAnimation 4.5s ease-in-out infinite;
         }
-        .delay-1 { animation-delay: 0.5s; }
-        .delay-2 { animation-delay: 1s; }
 
-        /* FUENTES ORIGINALES RESTAURADAS */
+        .delay-1 {
+            animation-delay: 0.5s;
+        }
+
+        .delay-2 {
+            animation-delay: 1s;
+        }
+
         .brand-left {
+
             color: #111111;
             line-height: 0.9;
+
         }
 
         .brand-left h1 {
+
             font-family: 'Helvetica Neue', Arial, sans-serif;
             font-size: clamp(3rem, 6vw, 4.5rem);
+
             font-weight: 700;
+
             letter-spacing: -2px;
+
         }
 
         .brand-left p {
+
             font-family: 'Helvetica Neue', Arial, sans-serif;
             font-size: clamp(1.5rem, 3vw, 2.2rem);
+
             font-weight: 500;
+
             letter-spacing: -1px;
+
             margin-top: -5px;
+
         }
 
         .lineup-right {
+
             text-align: right;
             color: #111111;
+
         }
 
         .lineup-title {
+
             font-family: 'Times New Roman', Times, serif;
             font-size: clamp(2rem, 4vw, 3rem);
+
             font-weight: 400;
+
             letter-spacing: 1px;
+
             line-height: 1;
+
             margin-bottom: 5px;
+
         }
 
         .artists {
+
             display: flex;
             flex-direction: column;
+
             gap: 2px;
+
         }
 
         .artists span {
+
             font-family: 'Helvetica Neue', Arial, sans-serif;
             font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+
             font-weight: 300;
+
             text-transform: lowercase;
+
             letter-spacing: 2px;
+
             line-height: 0.9;
+
         }
 
         .footer {
+
             display: flex;
             flex-direction: column;
             align-items: flex-start;
+
             width: 100%;
+
             gap: 12px;
+
         }
 
         .date-row {
+
             display: flex;
             align-items: baseline;
+
             gap: 15px;
+
             margin-bottom: 10px;
+
         }
 
         .main-date {
-            color: #d12a2a; 
+
+            color: #d12a2a;
+
             font-family: 'Helvetica Neue', Arial, sans-serif;
             font-size: clamp(3rem, 7vw, 5.5rem);
+
             font-weight: 900;
+
             font-style: italic;
+
             letter-spacing: -2px;
+
             line-height: 0.8;
+
         }
 
         .sub-date {
+
             color: #d12a2a;
+
             font-family: 'Helvetica Neue', Arial, sans-serif;
             font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+
             font-weight: 700;
+
             font-style: italic;
+
             letter-spacing: -1px;
+
         }
 
         .japanese-sub {
+
             color: #111111;
+
             font-family: 'Helvetica Neue', Arial, sans-serif;
             font-size: clamp(0.8rem, 1.8vw, 1.2rem);
+
             font-weight: bold;
+
             border: 1px solid #111111;
+
             padding: 2px 8px;
+
             letter-spacing: 1px;
+
         }
 
         .footer-bottom-row {
+
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
+
             width: 100%;
+
             gap: 15px;
+
         }
 
         .japanese-main {
+
             color: #111111;
+
             font-family: 'Helvetica Neue', Arial, sans-serif;
             font-size: clamp(2.5rem, 6vw, 4.5rem);
+
             font-weight: 900;
+
             letter-spacing: -1px;
+
             line-height: 1;
+
         }
 
         .btn-preventa {
+
             display: inline-block;
+
             text-decoration: none;
+
             color: #ffffff;
-            background: #111111; 
+            background: #111111;
+
             font-family: 'Helvetica Neue', Arial, sans-serif;
             font-size: clamp(0.9rem, 2vw, 1.3rem);
+
             font-weight: 700;
+
             text-transform: uppercase;
             font-style: italic;
+
             letter-spacing: 1px;
+
             padding: 14px 22px;
+
             border: 2px solid #111111;
-            border-radius: 0px;
+
             cursor: pointer;
+
             text-align: center;
+
             transition: all 0.2s ease;
+
             animation: pulseGlow 2.5s infinite;
+
         }
 
         .btn-preventa:hover {
+
             background: #ffffff;
             color: #111111;
+
             transform: scale(1.05) skewX(-4deg);
+
             box-shadow: 0 0 25px rgba(0,0,0,0.2);
+
+        }
+
+        .btn-whatsapp {
+
+            display: inline-block;
+
+            text-decoration: none;
+
+            color: #111111;
+
+            background: rgba(255,255,255,0.82);
+
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-size: clamp(0.85rem, 1.8vw, 1.1rem);
+
+            font-weight: 700;
+
+            text-transform: uppercase;
+
+            letter-spacing: 1px;
+
+            padding: 12px 18px;
+
+            border: 1px solid rgba(0,0,0,0.18);
+
+            backdrop-filter: blur(12px);
+
+            transition: all 0.25s ease;
+
+            text-align: center;
+
+        }
+
+        .btn-whatsapp:hover {
+
+            background: #111111;
+            color: white;
+
+            transform: translateY(-2px);
+
+            box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+
+        }
+
+        .ticket-modal {
+
+            position: fixed;
+
+            inset: 0;
+
+            background: rgba(255,255,255,0.78);
+
+            backdrop-filter: blur(18px);
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            z-index: 99999;
+
+            opacity: 0;
+            pointer-events: none;
+
+            transition: opacity 0.35s ease;
+
+        }
+
+        .ticket-modal.active {
+
+            opacity: 1;
+            pointer-events: auto;
+
+        }
+
+        .ticket-content {
+
+            width: min(92%, 540px);
+
+            max-height: 90vh;
+
+            overflow-y: auto;
+
+            background: rgba(255,255,255,0.88);
+
+            border: 1px solid rgba(0,0,0,0.12);
+
+            padding: 34px;
+
+            box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+
+            position: relative;
+
+        }
+
+        .ticket-content h2 {
+
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+
+            font-size: 2rem;
+
+            margin-bottom: 18px;
+
+            font-weight: 800;
+
+        }
+
+        .ticket-content p {
+
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+
+            line-height: 1.5;
+
+            margin-bottom: 14px;
+
+            color: #111;
+
+        }
+
+        .payment-box {
+
+            background: rgba(0,0,0,0.04);
+
+            padding: 18px;
+
+            margin-top: 20px;
+            margin-bottom: 20px;
+
+            border: 1px solid rgba(0,0,0,0.08);
+
+        }
+
+        .ticket-form {
+
+            display: flex;
+            flex-direction: column;
+
+            gap: 14px;
+
+        }
+
+        .ticket-form input {
+
+            width: 100%;
+
+            padding: 14px;
+
+            border: 1px solid rgba(0,0,0,0.15);
+
+            background: rgba(255,255,255,0.65);
+
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-size: 1rem;
+
+            outline: none;
+
+        }
+
+        .ticket-form input:focus {
+
+            border-color: #111;
+
+        }
+
+        .checkbox-row {
+
+            display: flex;
+
+            gap: 10px;
+
+            align-items: flex-start;
+
+            font-family: Helvetica Neue, Arial, sans-serif;
+            font-size: 0.92rem;
+
+        }
+
+        .checkbox-row input {
+
+            width: auto;
+
+            margin-top: 3px;
+
+        }
+
+        .submit-ticket {
+
+            width: 100%;
+
+            padding: 16px;
+
+            border: none;
+
+            background: #111111;
+
+            color: white;
+
+            font-family: Helvetica Neue, Arial, sans-serif;
+            font-size: 1rem;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition: all 0.2s ease;
+
+        }
+
+        .submit-ticket:hover {
+
+            background: #000000;
+
+            transform: scale(1.01);
+
+        }
+
+        .close-modal {
+
+            position: absolute;
+
+            top: 14px;
+            right: 20px;
+
+            font-size: 2rem;
+
+            cursor: pointer;
+
+            font-family: Arial;
+
+        }
+
+        .success-message {
+
+            display: none;
+
+            margin-top: 12px;
+
+            font-family: Helvetica Neue, Arial, sans-serif;
+
+            font-weight: bold;
+
         }
 
         @media (max-width: 768px) {
-            .ui-container { padding: 24px 18px; }
-            .header { flex-direction: column; gap: 15px; }
-            .lineup-right { text-align: left; }
-            .footer-bottom-row { flex-direction: column; align-items: stretch; gap: 15px; }
-            .btn-preventa { width: 100%; }
-            .date-row { flex-direction: column; align-items: flex-start; gap: 2px; }
+
+            .ui-container {
+                padding: 24px 18px;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .lineup-right {
+                text-align: left;
+            }
+
+            .footer-bottom-row {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 15px;
+            }
+
+            .btn-preventa {
+                width: 100%;
+            }
+
+            .btn-whatsapp {
+                width: 100%;
+            }
+
+            .date-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 2px;
+            }
+
         }
+
     </style>
+
 </head>
+
 <body>
 
     <div id="bg-image-layer"></div>
+
     <canvas id="canvas-3d"></canvas>
 
     <main class="ui-container">
+
         <header class="header">
+
             <div class="brand-left floating-element">
+
                 <h1>Diama.</h1>
+
                 <p>Querétaro</p>
+
             </div>
 
             <div class="lineup-right floating-element delay-1">
-                <h3 class="lineup-title">Break Madre</h3>
+
+                <h3 class="lineup-title">
+                    Break Madre
+                </h3>
+
                 <div class="artists">
+
                     <span>caparroso</span>
                     <span>firefly light</span>
                     <span>kinychbeat</span>
                     <span>andrésestr3s</span>
+
                 </div>
+
             </div>
+
         </header>
 
         <footer class="footer">
+
             <div class="date-row floating-element delay-1">
-                <div class="main-date">23 de mayo</div>
-                <div class="sub-date">8pm ubicación secreta</div>
+
+                <div class="main-date">
+                    23 de mayo
+                </div>
+
+                <div class="sub-date">
+                    8pm ubicación secreta
+                </div>
+
             </div>
 
             <div class="japanese-sub">
+
                 カジェ 13 デ セプティエンブレ #1、ニーニョス エロエス
+
             </div>
 
             <div class="footer-bottom-row">
+
                 <h2 class="japanese-main floating-element delay-2">
+
                     スキッと収納。
+
                 </h2>
-                
-                <a href="https://chat.whatsapp.com/E5mDw0LHP8Y9b9bU42Zchm" target="_blank" class="btn-preventa">
-                    Registrarse / Preventa
-                </a>
+
+                <div
+                    style="
+                        display:flex;
+                        flex-direction:column;
+                        gap:12px;
+                        width:min(100%,320px);
+                    "
+                >
+
+                    <a
+                        href="#"
+                        class="btn-preventa"
+                        id="openTicketModal"
+                    >
+                        Acceso / Preventa
+                    </a>
+
+                    <a
+                        href="https://chat.whatsapp.com/E5mDw0LHP8Y9b9bU42Zchm"
+                        target="_blank"
+                        class="btn-whatsapp"
+                    >
+                        Únete a la fiesta
+                    </a>
+
+                </div>
+
             </div>
+
         </footer>
+
     </main>
 
+    <!-- MODAL -->
+
+    <div
+        class="ticket-modal"
+        id="ticketModal"
+    >
+
+        <div class="ticket-content">
+
+            <div
+                class="close-modal"
+                id="closeModal"
+            >
+                ×
+            </div>
+
+            <h2>
+                DIAMA — Preventa
+            </h2>
+
+            <p>
+                Evento exclusivo para mayores de 18 años.
+            </p>
+
+            <p>
+                Se requerirá identificación oficial para ingresar.
+            </p>
+
+            <p>
+                La ubicación completa será enviada posteriormente.
+            </p>
+
+            <div class="payment-box">
+
+                <p>
+                    <strong>Banco:</strong>
+                    Banamex
+                </p>
+
+                <p>
+                    <strong>Titular:</strong>
+                    Andrés Ortiz Ayala
+                </p>
+
+                <p>
+                    <strong>Cuenta:</strong>
+                    <br>
+                    002180702274850419
+                </p>
+
+                <p>
+                    <strong>Preventa:</strong>
+                    $120 MXN
+                </p>
+
+            </div>
+
+            <form
+                class="ticket-form"
+                id="ticketForm"
+            >
+
+                <input
+                    type="text"
+                    placeholder="Nombre completo"
+                    id="name"
+                    required
+                >
+
+                <input
+                    type="email"
+                    placeholder="Correo electrónico"
+                    id="email"
+                    required
+                >
+
+                <input
+                    type="text"
+                    placeholder="Instagram"
+                    id="instagram"
+                >
+
+                <input
+                    type="tel"
+                    placeholder="Teléfono"
+                    id="phone"
+                    required
+                >
+
+                <input
+                    type="text"
+                    placeholder="Folio o referencia de transferencia"
+                    id="paymentRef"
+                    required
+                >
+
+                <div class="checkbox-row">
+
+                    <input
+                        type="checkbox"
+                        id="adultCheck"
+                        required
+                    >
+
+                    <label for="adultCheck">
+
+                        Confirmo que soy mayor de 18 años
+                        y entiendo que se requerirá identificación oficial.
+
+                    </label>
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="submit-ticket"
+                >
+                    Registrar acceso
+                </button>
+
+                <div
+                    class="success-message"
+                    id="successMessage"
+                >
+                    Registro enviado correctamente.
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
     <script>
+
         let scene, camera, renderer, tesseractGroup;
+
         let clock = new THREE.Clock();
-        const isMobile = window.innerWidth <= 768;
+
+        const isMobile =
+            window.innerWidth <= 768;
 
         function init3D() {
+
             scene = new THREE.Scene();
+
             scene.background = null;
 
-            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.z = isMobile ? 4.5 : 4; 
+            camera = new THREE.PerspectiveCamera(
+                45,
+                window.innerWidth / window.innerHeight,
+                0.1,
+                1000
+            );
 
-            renderer = new THREE.WebGLRenderer({
-                canvas: document.getElementById('canvas-3d'),
-                alpha: true,
-                antialias: !isMobile
-            });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            camera.position.z =
+                isMobile ? 4.5 : 4;
 
-            tesseractGroup = new THREE.Group();
+            renderer =
+                new THREE.WebGLRenderer({
 
-            const lineMaterial = new THREE.LineBasicMaterial({ 
-                color: 0x111111,
-                transparent: true,
-                opacity: 0.85
-            });
+                    canvas:
+                        document.getElementById(
+                            'canvas-3d'
+                        ),
 
-            const baseSize = isMobile ? 0.9 : 1.2;
-            const innerSize = baseSize * 0.46;
+                    alpha: true,
 
-            const geoOuter = new THREE.BoxGeometry(baseSize, baseSize, baseSize);
-            const edgesOuter = new THREE.EdgesGeometry(geoOuter);
-            const cubeOuter = new THREE.LineSegments(edgesOuter, lineMaterial);
+                    antialias: !isMobile
 
-            const geoInner = new THREE.BoxGeometry(innerSize, innerSize, innerSize);
-            const edgesInner = new THREE.EdgesGeometry(geoInner);
-            const cubeInner = new THREE.LineSegments(edgesInner, lineMaterial);
+                });
+
+            renderer.setSize(
+                window.innerWidth,
+                window.innerHeight
+            );
+
+            renderer.setPixelRatio(
+                Math.min(window.devicePixelRatio, 2)
+            );
+
+            tesseractGroup =
+                new THREE.Group();
+
+            const lineMaterial =
+                new THREE.LineBasicMaterial({
+
+                    color: 0x111111,
+
+                    transparent: true,
+
+                    opacity: 0.85
+
+                });
+
+            const baseSize =
+                isMobile ? 0.9 : 1.2;
+
+            const innerSize =
+                baseSize * 0.46;
+
+            const geoOuter =
+                new THREE.BoxGeometry(
+                    baseSize,
+                    baseSize,
+                    baseSize
+                );
+
+            const edgesOuter =
+                new THREE.EdgesGeometry(
+                    geoOuter
+                );
+
+            const cubeOuter =
+                new THREE.LineSegments(
+                    edgesOuter,
+                    lineMaterial
+                );
+
+            const geoInner =
+                new THREE.BoxGeometry(
+                    innerSize,
+                    innerSize,
+                    innerSize
+                );
+
+            const edgesInner =
+                new THREE.EdgesGeometry(
+                    geoInner
+                );
+
+            const cubeInner =
+                new THREE.LineSegments(
+                    edgesInner,
+                    lineMaterial
+                );
 
             tesseractGroup.add(cubeOuter);
             tesseractGroup.add(cubeInner);
 
-            const connectorGeometry = new THREE.BufferGeometry();
+            const connectorGeometry =
+                new THREE.BufferGeometry();
+
             const vertices = [];
+
             const h = baseSize / 2;
             const ih = innerSize / 2;
+
             const vOpt = [-h, h];
 
             for (let x of vOpt) {
+
                 for (let y of vOpt) {
+
                     for (let z of vOpt) {
+
                         vertices.push(x, y, z);
-                        let ix = x > 0 ? ih : -ih;
-                        let iy = y > 0 ? ih : -ih;
-                        let iz = z > 0 ? ih : -ih;
+
+                        let ix =
+                            x > 0 ? ih : -ih;
+
+                        let iy =
+                            y > 0 ? ih : -ih;
+
+                        let iz =
+                            z > 0 ? ih : -ih;
+
                         vertices.push(ix, iy, iz);
+
                     }
+
                 }
+
             }
 
-            connectorGeometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-            const connections = new THREE.LineSegments(connectorGeometry, lineMaterial);
+            connectorGeometry.setAttribute(
+
+                'position',
+
+                new THREE.Float32BufferAttribute(
+                    vertices,
+                    3
+                )
+
+            );
+
+            const connections =
+                new THREE.LineSegments(
+                    connectorGeometry,
+                    lineMaterial
+                );
+
             tesseractGroup.add(connections);
 
             if(isMobile) {
-                tesseractGroup.position.set(0, 0.1, 0);
+
+                tesseractGroup.position.set(
+                    0,
+                    0.1,
+                    0
+                );
+
             }
 
             scene.add(tesseractGroup);
 
-            window.addEventListener('resize', onWindowResize, false);
+            window.addEventListener(
+                'resize',
+                onWindowResize,
+                false
+            );
+
             animate();
+
         }
 
         function onWindowResize() {
-            const width = window.innerWidth;
-            const height = window.innerHeight;
-            const checkMobile = width <= 768;
-            
-            camera.aspect = width / height;
-            camera.position.z = checkMobile ? 4.5 : 4;
+
+            const width =
+                window.innerWidth;
+
+            const height =
+                window.innerHeight;
+
+            const checkMobile =
+                width <= 768;
+
+            camera.aspect =
+                width / height;
+
+            camera.position.z =
+                checkMobile ? 4.5 : 4;
+
             camera.updateProjectionMatrix();
-            renderer.setSize(width, height);
+
+            renderer.setSize(
+                width,
+                height
+            );
+
         }
 
         function animate() {
+
             requestAnimationFrame(animate);
 
-            let time = clock.getElapsedTime();
+            let time =
+                clock.getElapsedTime();
 
-            tesseractGroup.rotation.y = time * 0.22;
-            tesseractGroup.rotation.x = time * 0.12;
+            tesseractGroup.rotation.y =
+                time * 0.22;
 
-            const pulseOuter = 1 + Math.sin(time * 1.3) * 0.12;
-            const pulseInner = 1 - Math.sin(time * 1.3) * 0.18;
+            tesseractGroup.rotation.x =
+                time * 0.12;
 
-            tesseractGroup.children[0].scale.set(pulseOuter, pulseOuter, pulseOuter);
-            tesseractGroup.children[1].scale.set(pulseInner, pulseInner, pulseInner);
-            tesseractGroup.children[2].scale.set(pulseOuter, pulseOuter, pulseOuter);
+            const pulseOuter =
+                1 + Math.sin(time * 1.3) * 0.12;
 
-            tesseractGroup.position.y = (isMobile ? 0.1 : 0) + Math.sin(time * 0.8) * 0.06;
+            const pulseInner =
+                1 - Math.sin(time * 1.3) * 0.18;
+
+            tesseractGroup.children[0].scale.set(
+                pulseOuter,
+                pulseOuter,
+                pulseOuter
+            );
+
+            tesseractGroup.children[1].scale.set(
+                pulseInner,
+                pulseInner,
+                pulseInner
+            );
+
+            tesseractGroup.children[2].scale.set(
+                pulseOuter,
+                pulseOuter,
+                pulseOuter
+            );
+
+            tesseractGroup.position.y =
+                (isMobile ? 0.1 : 0)
+                + Math.sin(time * 0.8) * 0.06;
 
             renderer.render(scene, camera);
+
         }
 
         window.onload = init3D;
+
+        const openTicketModal =
+            document.getElementById(
+                'openTicketModal'
+            );
+
+        const ticketModal =
+            document.getElementById(
+                'ticketModal'
+            );
+
+        const closeModal =
+            document.getElementById(
+                'closeModal'
+            );
+
+        openTicketModal.addEventListener(
+            'click',
+            (e) => {
+
+                e.preventDefault();
+
+                ticketModal.classList.add(
+                    'active'
+                );
+
+            }
+        );
+
+        closeModal.addEventListener(
+            'click',
+            () => {
+
+                ticketModal.classList.remove(
+                    'active'
+                );
+
+            }
+        );
+
+        window.addEventListener(
+            'click',
+            (e) => {
+
+                if(e.target === ticketModal) {
+
+                    ticketModal.classList.remove(
+                        'active'
+                    );
+
+                }
+
+            }
+        );
+
+        const ticketForm =
+            document.getElementById(
+                'ticketForm'
+            );
+
+        ticketForm.addEventListener(
+            'submit',
+            async (e) => {
+
+                e.preventDefault();
+
+                const data = {
+
+                    name:
+                        document.getElementById(
+                            'name'
+                        ).value,
+
+                    email:
+                        document.getElementById(
+                            'email'
+                        ).value,
+
+                    instagram:
+                        document.getElementById(
+                            'instagram'
+                        ).value,
+
+                    phone:
+                        document.getElementById(
+                            'phone'
+                        ).value,
+
+                    paymentRef:
+                        document.getElementById(
+                            'paymentRef'
+                        ).value,
+
+                    timestamp:
+                        new Date().toISOString()
+
+                };
+
+                console.log(data);
+
+                document.getElementById(
+                    'successMessage'
+                ).style.display = 'block';
+
+                ticketForm.reset();
+
+            }
+        );
+
     </script>
-</body>
-</html>
+
 </body>
 </html>
